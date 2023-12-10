@@ -15,3 +15,15 @@ maven dependency:resolve clean compile package
 ```bash
 java -jar target/dai-pw3-1.0-SNAPSHOT.jar
 ```
+
+```bash
+java -jar target/dai-pw3-1.0-SNAPSHOT.jar adventurer
+```
+
+```bash
+java -jar target/dai-pw3-1.0-SNAPSHOT.jar guild
+```
+
+```bash
+java -jar target/dai-pw3-1.0-SNAPSHOT.jar townhall
+```
