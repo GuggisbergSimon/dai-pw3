@@ -1,4 +1,4 @@
-# Hangman
+# Of Guilds and Adventurers
 
 ## Instructions
 
@@ -10,7 +10,7 @@ Either use the "Package as JAR file" run configuration or :
 maven dependency:resolve clean compile package
 ```
 
-### Run the application
+### Running the application
 
 ```bash
 java -jar target/dai-pw3-1.0-SNAPSHOT.jar
