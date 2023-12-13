@@ -5,10 +5,10 @@ import picocli.CommandLine;
 import java.util.concurrent.Callable;
 
 @CommandLine.Command(
-        name = "townhall",
-        description = "Start a townhall"
+        name = "billboard",
+        description = "Start a billboard"
 )
-public class TownHall implements Callable<Integer> {
+public class BillBoard implements Callable<Integer> {
     @Override
     public Integer call() {
         //TODO

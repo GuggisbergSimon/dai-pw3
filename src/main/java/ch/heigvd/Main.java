@@ -10,7 +10,7 @@ import picocli.CommandLine.Command;
         subcommands = {
                 Guild.class,
                 Adventurer.class,
-                TownHall.class,
+                BillBoard.class,
         },
         scope = CommandLine.ScopeType.INHERIT,
         mixinStandardHelpOptions = true
