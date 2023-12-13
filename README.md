@@ -17,15 +17,15 @@ java -jar target/dai-pw3-1.0-SNAPSHOT.jar
 ```
 
 ```bash
-java -jar target/dai-pw3-1.0-SNAPSHOT.jar adventurer
+java -jar target/dai-pw3-1.0-SNAPSHOT.jar billboard -H 224.0.0.1 -i lo
 ```
 
 ```bash
-java -jar target/dai-pw3-1.0-SNAPSHOT.jar guild
+java -jar target/dai-pw3-1.0-SNAPSHOT.jar adventurer -H 224.0.0.1
 ```
 
 ```bash
-java -jar target/dai-pw3-1.0-SNAPSHOT.jar townhall
+java -jar target/dai-pw3-1.0-SNAPSHOT.jar guild -H 224.0.0.1 -i lo
 ```
 
 # Application Protocol
