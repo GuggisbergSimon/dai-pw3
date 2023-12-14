@@ -13,14 +13,14 @@ import java.util.concurrent.TimeUnit;
         description = "Start a billboard"
 )
 public class BillBoard extends AbstractMulticast {
+    //TODO find a way to refactor this as java doesn't allow multiple inheritance
     @CommandLine.Option(
-            names = {"-mp", "--multicast-port"},
-            description = "Port to use for multicast (default: 9888).",
-            defaultValue = "9888",
+            names = {"-up", "--unicastPort"},
+            description = "Port to use (default: 32000).",
+            defaultValue = "32000",
             scope = CommandLine.ScopeType.INHERIT
     )
-    protected int multicastPort;
-
+    protected int unicastPort;
     @Override
     public Integer call() {
         ExecutorService executorService = Executors.newFixedThreadPool(2);
@@ -40,11 +40,11 @@ public class BillBoard extends AbstractMulticast {
 
     private Integer multicast() {
         try (MulticastSocket socket = new MulticastSocket(multicastPort)) {
-            String myself = InetAddress.getLocalHost().getHostAddress() + ":" + parent.getPort();
+            String myself = InetAddress.getLocalHost().getHostAddress() + ":" + multicastPort;
             System.out.println("[BillBoard] Multicast receiver started (" + myself + ")");
 
-            InetAddress multicastAddress = InetAddress.getByName(host);
-            InetSocketAddress group = new InetSocketAddress(multicastAddress, parent.getPort());
+            InetAddress multicastAddress = InetAddress.getByName(String.valueOf(multicastPort));
+            InetSocketAddress group = new InetSocketAddress(multicastAddress, multicastPort);
             NetworkInterface networkInterface = NetworkInterface.getByName(interfaceName);
             socket.joinGroup(group, networkInterface);
 
@@ -76,8 +76,8 @@ public class BillBoard extends AbstractMulticast {
     }
 
     private Integer unicast() {
-        try (DatagramSocket socket = new DatagramSocket(parent.getPort())) {
-            String myself = InetAddress.getLocalHost().getHostAddress() + ":" + parent.getPort();
+        try (DatagramSocket socket = new DatagramSocket(unicastPort)) {
+            String myself = InetAddress.getLocalHost().getHostAddress() + ":" + unicastPort;
             System.out.println("[Billboard] Unicast receiver started (" + myself + ")");
 
             byte[] receiveData = new byte[1024];

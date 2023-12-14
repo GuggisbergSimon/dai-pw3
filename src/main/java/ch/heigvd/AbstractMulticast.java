@@ -10,4 +10,11 @@ public abstract class AbstractMulticast extends AbstractCallable {
             required = true
     )
     protected String interfaceName;
+    @CommandLine.Option(
+            names = {"-mp", "--multicastPort"},
+            description = "Port to use (default: 42000).",
+            defaultValue = "42000",
+            scope = CommandLine.ScopeType.INHERIT
+    )
+    protected int multicastPort;
 }

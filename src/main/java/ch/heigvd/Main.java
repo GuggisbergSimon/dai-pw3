@@ -17,15 +17,6 @@ import picocli.CommandLine.Command;
 )
 @Getter
 public class Main {
-
-    @CommandLine.Option(
-            names = {"-p", "--port"},
-            description = "Port to use (default: 9876).",
-            defaultValue = "9876",
-            scope = CommandLine.ScopeType.INHERIT
-    )
-    protected int port;
-
     public static void main(String... args) {
         // Source: https://stackoverflow.com/a/11159435
         String commandName = new java.io.File(

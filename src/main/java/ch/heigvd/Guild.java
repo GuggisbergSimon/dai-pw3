@@ -13,12 +13,12 @@ import java.util.Scanner;
 public class Guild extends AbstractMulticast {
     @Override
     public Integer call() {
-        try (MulticastSocket socket = new MulticastSocket(parent.getPort())) {
-            String myself = InetAddress.getLocalHost().getHostAddress() + ":" + parent.getPort();
+        try (MulticastSocket socket = new MulticastSocket(multicastPort)) {
+            String myself = InetAddress.getLocalHost().getHostAddress() + ":" + multicastPort;
             System.out.println("[Guild] started (" + myself + ")");
 
             InetAddress multicastAddress = InetAddress.getByName(host);
-            InetSocketAddress group = new InetSocketAddress(multicastAddress, parent.getPort());
+            InetSocketAddress group = new InetSocketAddress(multicastAddress, multicastPort);
             NetworkInterface networkInterface = NetworkInterface.getByName(interfaceName);
             socket.joinGroup(group, networkInterface);
 

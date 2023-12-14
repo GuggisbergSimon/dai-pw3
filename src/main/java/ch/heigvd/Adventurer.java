@@ -12,12 +12,12 @@ import java.util.Scanner;
         name = "adventurer",
         description = "Start an Adventurer"
 )
-public class Adventurer extends AbstractCallable {
+public class Adventurer extends AbstractUnicast {
 
     @Override
     public Integer call() {
         try (DatagramSocket socket = new DatagramSocket()) {
-            String myself = InetAddress.getLocalHost().getHostAddress() + ":" + parent.getPort();
+            String myself = InetAddress.getLocalHost().getHostAddress() + " mp :" + unicastPort + " up : " + unicastPort;
             System.out.println("[Adventurer] started (" + myself + ")");
             InetAddress serverAddress = InetAddress.getByName(host);
 
@@ -40,7 +40,7 @@ public class Adventurer extends AbstractCallable {
                         payload,
                         payload.length,
                         serverAddress,
-                        parent.getPort()
+                        unicastPort
                 );
 
                 socket.send(datagram);
