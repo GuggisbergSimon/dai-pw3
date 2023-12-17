@@ -1,0 +1,32 @@
+networks:
+  my-isolated-network:
+    name: dungeons-and-dragons
+
+services:
+  adventurer:
+    image: ghcr.io/guggisbergsimon/dai-pw3
+    command:
+      - adventurer
+      - --host=239.1.1.1
+      - --port=32000
+
+  guild:
+    image: ghcr.io/guggisbergsimon/dai-pw3
+    command:
+      - guild
+      - --host=239.1.1.1
+      - --port=42000
+      - --interface=eth0
+    networks:
+      - dungeons-and-dragons
+
+  billboard:
+    image: ghcr.io/guggisbergsimon/dai-pw3
+    command:
+      - billboard
+      - --host=239.1.1.1
+      - --multicastPort=42000
+      - --port=32000
+      - --interface=eth0
+    networks:
+      - dungeons-and-dragons
