@@ -11,7 +11,7 @@ maven dependency:resolve clean compile package
 ```
 
 ```bash
-docker build -t dai-pw3:v1.0 -f .\multistage.Dockerfileage .
+docker build -t dai-pw3:v1.0 .
 ```
 
 ```bash

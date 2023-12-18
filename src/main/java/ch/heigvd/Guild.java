@@ -25,51 +25,138 @@ public class Guild extends AbstractMulticast {
             NetworkInterface networkInterface = NetworkInterface.getByName(interfaceName);
             socket.joinGroup(group, networkInterface);
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            while (true) {
-                System.out.println("[Guild] Enter a command");
-                System.out.println(">> ");
-                String message = reader.readLine();
+            Quest[] quests = new Quest[20];
+            quests[0] = new Quest(
+                    "Goblin Infestation",
+                    "Clear the goblin den threatening a nearby village.",
+                    50
+            );
 
-                // TODO check input
-                String[] arguments = message.split(" ");
-                if (arguments.length == 0) {
-                    continue;
-                } else if (arguments[0].equalsIgnoreCase("EXIT")) {
-                    break;
-                } else if (!arguments[0].equalsIgnoreCase("POST")) {
-                    System.out.println("Unknown command");
-                    continue;
-                }
+            quests[1] = new Quest(
+                    "Enchanted Forest Mystery",
+                    "Investigate strange occurrences in the mystical woods.",
+                    75
+            );
 
-                if(arguments.length != 5) {
-                    System.out.println("Wrong number of arguments: POST <uuid> <name> <description> <reward>");
-                    continue;
-                }
+            quests[2] = new Quest(
+                    "Lost Relic Retrieval",
+                    "Recover a valuable ancient artifact from a hidden tomb.",
+                    100
+            );
 
-                UUID uuid;
+            quests[3] = new Quest(
+                    "Dragon Menace",
+                    "Slay the dragon terrorizing the countryside.",
+                    200
+            );
 
-                try{
-                    uuid = UUID.fromString(arguments[1]);
-                } catch (IllegalArgumentException exception){
-                    System.out.println("Wrong uuid format");
-                    continue;
-                }
+            quests[4] = new Quest(
+                    "Cursed Mines",
+                    "Lift the curse plaguing a once-prosperous mining town.",
+                    80
+            );
 
-                String name = arguments[2];
-                String description = arguments[3];
-                int reward;
+            quests[5] = new Quest(
+                    "Bandit King's Lair",
+                    "Infiltrate the bandit king's stronghold and bring him to justice.",
+                    120
+            );
 
-                try{
-                    reward = Integer.parseInt(arguments[4]);
-                } catch (NumberFormatException exception){
-                    System.out.println("Wrong reward format");
-                    continue;
-                }
+            quests[6] = new Quest(
+                    "Elemental Disturbance",
+                    "Restore balance to the disrupted elemental nexus.",
+                    90
+            );
 
-                Quest quest = new Quest(name, description, reward, uuid.toString());
+            quests[7] = new Quest(
+                    "Ghost Ship Haunting",
+                    "Investigate a haunted ship and lay the spirits to rest.",
+                    70
+            );
+
+            quests[8] = new Quest(
+                    "Bounty on the Werewolf",
+                    "Hunt down the notorious werewolf terrorizing the town.",
+                    150
+            );
+
+            quests[9] = new Quest(
+                    "Mystic Crystal Theft",
+                    "Retrieve stolen mystical crystals from a thieves' guild.",
+                    110
+            );
+
+            quests[10] = new Quest(
+                    "Abandoned Wizard's Tower",
+                    "Explore a long-forgotten wizard's tower for lost magical knowledge.",
+                    60
+            );
+
+            quests[11] = new Quest(
+                    "Sunken City Exploration",
+                    "Dive into the depths to uncover the secrets of a sunken city.",
+                    130
+            );
+
+            quests[12] = new Quest(
+                    "Forest Guardian’s Request",
+                    "Aid the ancient forest guardian in protecting its realm.",
+                    85
+            );
+
+            quests[13] = new Quest(
+                    "Time-Shifted Ruins",
+                    "Navigate a time-distorted ruin to recover a valuable artifact.",
+                    180
+            );
+
+            quests[14] = new Quest(
+                    "Celestial Conundrum",
+                    "Solve a puzzle in a celestial observatory to avert a cosmic disaster.",
+                    95
+            );
+
+            quests[15] = new Quest(
+                    "Minotaur Maze Expedition",
+                    "Navigate a labyrinth to defeat the minotaur at its heart.",
+                    140
+            );
+
+            quests[16] = new Quest(
+                    "Shadow Realm Incursion",
+                    "Close a portal leaking dark entities into the realm of light.",
+                    160
+            );
+
+            quests[17] = new Quest(
+                    "Rogue Alchemist's Laboratory",
+                    "Shut down an outlaw alchemist’s dangerous experiments.",
+                    110
+            );
+
+            quests[18] = new Quest(
+                    "Elemental Crystal Heist",
+                    "Retrieve stolen elemental crystals from a cunning thief.",
+                    75
+            );
+
+            quests[19] = new Quest(
+                    "Sphinx Riddles Challenge",
+                    "Answer the riddles posed by a wise sphinx guarding a treasure.",
+                    125
+            );
+
+            // 5% chance to exit every time
+            while (Math.random() * 100 >= 5) {
+
+                // wait random time between 1 and 5 seconds
+                Thread.sleep((long) (Math.random() * 4000 + 1000));
+
+                Quest quest = quests[(int) (Math.random() * quests.length)];
 
                 String messageToSend = quest.toGuildPostMessage();
+
+                System.out.println("[Guild] Sending: " + messageToSend);
 
                 byte[] payload = messageToSend.getBytes(StandardCharsets.UTF_8);
 
