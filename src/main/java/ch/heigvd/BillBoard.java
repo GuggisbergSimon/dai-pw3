@@ -4,6 +4,8 @@ import picocli.CommandLine;
 
 import java.net.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -21,6 +23,9 @@ public class BillBoard extends AbstractMulticast {
             scope = CommandLine.ScopeType.INHERIT
     )
     protected int unicastPort;
+
+    private ArrayList<Quest> quests = new ArrayList<Quest>();
+
     @Override
     public Integer call() {
         ExecutorService executorService = Executors.newFixedThreadPool(2);
@@ -66,6 +71,11 @@ public class BillBoard extends AbstractMulticast {
                 );
 
                 System.out.println("[Billboard] Multicast receiver (" + myself + ") received message: " + message);
+
+                Quest quest = Quest.fromGuildPostMessage(message);
+                if (quest != null) {
+                    quests.add(quest);
+                }
             }
 
 

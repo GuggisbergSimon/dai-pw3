@@ -154,11 +154,11 @@ public class Guild extends AbstractMulticast {
 
                 Quest quest = quests[(int) (Math.random() * quests.length)];
 
-                String messageToSend = quest.toGuildPostMessage();
+                String message = quest.toGuildPostMessage();
 
-                System.out.println("[Guild] Sending: " + messageToSend);
+                System.out.println("[Guild] Sending: " + message);
 
-                byte[] payload = messageToSend.getBytes(StandardCharsets.UTF_8);
+                byte[] payload = message.getBytes(StandardCharsets.UTF_8);
 
                 DatagramPacket datagram = new DatagramPacket(
                         payload,

@@ -1,5 +1,7 @@
 package ch.heigvd;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public class Quest {
@@ -40,6 +42,25 @@ public class Quest {
     }
 
     public String toGuildPostMessage() {
-        return ("POST '" + uuid + "' '" + name + "' '" + description + "' '" + reward + "'");
+        return ("POST " + uuid + "|" + name + "|" + description + "|" + reward);
+    }
+
+    /*
+    * Parse a quest from a message received from a guild
+    * returns null if the message is not a valid quest
+     */
+    public static Quest fromGuildPostMessage(String message) {
+        String[] parts = message.split(" ", 2);
+        if(!parts[0].equals("POST")) {
+            return null;
+        }
+
+        String[] questParts = parts[1].split("\\|");
+        return new Quest(
+                questParts[1],
+                questParts[2],
+                Integer.parseInt(questParts[3]),
+                questParts[0]
+        );
     }
 }
