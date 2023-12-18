@@ -7,6 +7,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 @CommandLine.Command(
@@ -14,6 +15,14 @@ import java.util.Scanner;
         description = "Start an Adventurer"
 )
 public class Adventurer extends AbstractUnicast {
+    private Quest acceptedQuest;
+    private boolean hasAQuest = false;
+
+
+    private enum Requests {
+        GET,
+        COMPLETE
+    }
 
     @Override
     public Integer call() {
@@ -23,47 +32,53 @@ public class Adventurer extends AbstractUnicast {
             InetAddress serverAddress = InetAddress.getByName(host);
 
             Scanner scanner = new Scanner(System.in);
-            while (true) {
-                System.out.print("[Adventurer] Enter a command: ");
-                String message = scanner.nextLine().toUpperCase();
+            String message;
+            // 3% chance to exit every time.
+            while (Math.random() * 100 >= 3) {
+                System.out.print("[Adventurer] is arrived to the village.");
 
-                // TODO check input
-                String[] arguments = message.split(" ");
-                if (arguments.length == 0) {
-                    continue;
-                } else if (arguments[0].equalsIgnoreCase("SUMMARY")) {
-                    System.out.println("I'm checking the billboard");
-                } else if (arguments[0].equalsIgnoreCase("GET")) {
-                    System.out.println("I'm getting the quest number " + arguments[1]);
-                } else if (arguments[0].equalsIgnoreCase("COMPLETE")){
-                    System.out.println("I completed the quest number " + arguments[1]);
-                } else if (arguments[0].equalsIgnoreCase("EXIT")) {
-                    break;
+
+                Thread.sleep((long) (Math.random() * 5000 + 10000));
+                //Effectue la request.
+                if (hasAQuest){
+                    System.out.println("[Adventurer] will return the quest.");
+                    message = Requests.COMPLETE.name() + " " + acceptedQuest.getUuid();
+                }
+                else {
+                    System.out.println("[Adventurer] is going to pick a quest");
+                    message = Requests.GET.name();
                 }
 
-                //Envoi du datagram
                 byte[] payload = message.getBytes(StandardCharsets.UTF_8);
 
-                DatagramPacket datagram = new DatagramPacket(
-                        payload,
-                        payload.length,
-                        serverAddress,
-                        unicastPort
-                );
+                DatagramPacket sendedDatagram = new DatagramPacket(payload, payload.length,serverAddress, unicastPort);
+                socket.send(sendedDatagram);
 
-                socket.send(datagram);
+                // Attente de la réponse
+                byte[] receivedPayload = new byte[1024];
 
-                //Reception du datagram
-                byte[] receiveDatagram = new byte[1024];
-                DatagramPacket receivePacket = new DatagramPacket(receiveDatagram, receiveDatagram.length);
-                socket.receive(receivePacket);
+                DatagramPacket receivedDatagram = new DatagramPacket(receivedPayload, receivedPayload.length);
+                socket.receive(receivedDatagram);
 
-                String receivedMessage = new String(receivePacket.getData(), receivePacket.getOffset(), receivePacket.getLength(), StandardCharsets.UTF_8);
+                String receivedMessage = new String(
+                        receivedDatagram.getData(),
+                        receivedDatagram.getOffset(),
+                        receivedDatagram.getLength(),
+                        StandardCharsets.UTF_8);
 
                 String[] receivedArguments = receivedMessage.split(" ");
 
-                // TODO Faire les différents cas dépendant de la réponse de Billboard.
+                //Validation de réponses obtenu de Billboard
 
+                if (receivedArguments[0] == "COMPLETE" && receivedArguments.length == 1){
+                    System.out.println("[Adventurer] received " + acceptedQuest.getReward() + " golds for completing the quest !");
+                    hasAQuest = false;
+                    System.out.println("[Adventurer] will now take some rest.");
+                }
+                else if (receivedArguments[0] == "GIVE" && receivedArguments.length == 2){
+                    acceptedQuest = Quest.fromBillboardToAdventurer(receivedMessage);
+                    System.out.println("[Adventurer] take the quest \"" + acceptedQuest.getName() + "\" and leave the village for a moment.");
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -46,8 +46,8 @@ public class Quest {
     }
 
     /*
-    * Parse a quest from a message received from a guild
-    * returns null if the message is not a valid quest
+     * Parse a quest from a message received from a guild
+     * returns null if the message is not a valid quest
      */
     public static Quest fromGuildPostMessage(String message) {
         String[] parts = message.split(" ", 2);
@@ -62,5 +62,28 @@ public class Quest {
                 Integer.parseInt(questParts[3]),
                 questParts[0]
         );
+
+
+    }
+
+    /*
+     * Parse a quest from a message stocked on billboard
+     * returns null if the message is not a valid quest
+     */
+    public static Quest fromBillboardToAdventurer(String message) {
+        String[] parts = message.split(" ", 2);
+        if(!parts[0].equals("GIVE")) {
+            return null;
+        }
+
+        String[] questParts = parts[1].split("\\|");
+        return new Quest(
+                questParts[1],
+                questParts[2],
+                Integer.parseInt(questParts[3]),
+                questParts[0]
+        );
+
+
     }
 }
