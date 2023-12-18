@@ -101,7 +101,7 @@ public class BillBoard extends AbstractMulticast {
                 System.out.println("[Billboard] Unicast receiver (" + myself + ") received message: " + message);
 
                 //Process les requetes
-                byte[] sendData;
+                byte[] sendData = message.getBytes();
                 String[] arguments = message.split(" ");
                 if (arguments[0] == "GET" && arguments.length == 2){
                     String uuid = arguments[1];

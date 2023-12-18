@@ -61,7 +61,7 @@ public class Adventurer extends AbstractUnicast {
                 String receivedMessage = new String(receivePacket.getData(), receivePacket.getOffset(), receivePacket.getLength(), StandardCharsets.UTF_8);
 
                 String[] receivedArguments = receivedMessage.split(" ");
-                
+
                 // TODO Faire les différents cas dépendant de la réponse de Billboard.
 
             }
