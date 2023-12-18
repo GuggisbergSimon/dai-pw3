@@ -10,6 +10,23 @@ Either use the "Package as JAR file" run configuration or :
 maven dependency:resolve clean compile package
 ```
 
+```bash
+docker build -t dai-pw3:v1.0 -f .\multistage.Dockerfileage .
+```
+
+```bash
+docker tag dai-pw3:v1.0 ghcr.io/guggisbergsimon/dai-pw3:v1.0
+```
+
+Optional if working locally
+```bash
+docker push ghcr.io/guggisbergsimon/dai-pw3:v1.0
+```
+
+```bash
+docker compose up
+```
+
 ### Running the application
 
 ```bash
