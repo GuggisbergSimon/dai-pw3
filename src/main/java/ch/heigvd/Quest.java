@@ -38,4 +38,8 @@ public class Quest {
     public int getReward() {
         return reward;
     }
+
+    public String toGuildPostMessage() {
+        return ("POST '" + uuid + "' '" + name + "' '" + description + "' '" + reward + "'");
+    }
 }
