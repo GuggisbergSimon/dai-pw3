@@ -5,7 +5,6 @@ import picocli.CommandLine;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -15,7 +14,6 @@ import java.util.concurrent.TimeUnit;
         description = "Start a billboard"
 )
 public class BillBoard extends AbstractMulticast {
-    //TODO find a way to refactor this as java doesn't allow multiple inheritance
     @CommandLine.Option(
             names = {"-up", "--unicastPort"},
             description = "Port to use (default: 32000).",
@@ -70,7 +68,7 @@ public class BillBoard extends AbstractMulticast {
                         StandardCharsets.UTF_8
                 );
 
-                System.out.println("[Billboard] Multicast receiver (" + myself + ") received message: " + message);
+                System.out.println("[Billboard] Multicast receiver: " + message);
 
                 Quest quest = Quest.fromGuildPostMessage(message);
                 if (quest != null) {
@@ -93,7 +91,6 @@ public class BillBoard extends AbstractMulticast {
             byte[] receiveData = new byte[1024];
 
             while (true) {
-                //Reception de la requete
                 DatagramPacket packet = new DatagramPacket(
                         receiveData,
                         receiveData.length
@@ -108,39 +105,36 @@ public class BillBoard extends AbstractMulticast {
                         StandardCharsets.UTF_8
                 );
 
-                System.out.println("[Billboard] Unicast receiver (" + myself + ") received message: " + message);
+                System.out.println("[Billboard] Unicast receiver: " + message);
 
-                //Process les requetes
                 byte[] sendData = message.getBytes();
                 String[] arguments = message.split(" ");
-                if (arguments[0] == "GET" && arguments.length == 2){
-                    String uuid = arguments[1];
-                    // TODO à modifier dépendant du système de mappage des quetes.
-                    String questInfo = "SEND [questName] [questDesc] [sum]"; //Dépendant du système de billboard.
-                    if (questInfo != null){
-                        //renvois l'info à l'aventurier.
+
+                if (arguments[0].equalsIgnoreCase("GET") && arguments.length == 1) {
+                    if (quests.isEmpty()) {
+                        String errorNoQuests = "ERROR NO_ID";
+                        sendData = errorNoQuests.getBytes();
+                    } else {
+                        int number = (int) (Math.random() * quests.size());
+                        Quest sendedQuest = quests.get(number);
+                        String questInfo = "GIVE " +
+                                sendedQuest.getUuid() + "|" +
+                                sendedQuest.getName() + "|" +
+                                sendedQuest.getDescription() + "|" +
+                                sendedQuest.getReward();
                         sendData = questInfo.getBytes();
                     }
-                    else {
-                        System.out.println("Quête pas trouvé");
-                    }
-                }
-                else if (arguments[0] == "COMPLETE" && arguments.length == 2){
-                    // TODO set dans le billboard que la quête est terminé.
-                    String questComplete = "La quete " + arguments[1] + " a ete termine";
+                } else if (arguments[0].equalsIgnoreCase("COMPLETE") && arguments.length == 2) {
+                    quests.removeIf(quest -> quest.getUuid() == arguments[1]);
+                    System.out.println("[Billboard] Quest " + arguments[1] + " has been completed");
+                    String questComplete = "COMPLETE";
                     sendData = questComplete.getBytes();
+                } else {
+                    System.out.println("Invalid request");
                 }
-                else if (arguments[0] == "SUMMARY" && arguments.length == 1){
-                    // TODO afficher toutes ou une partie des quêtes.
-                    String listQuests = "LIST";
-                }
-                else {
-                    System.out.println("Requete invalide");
-                }
-                //Faut voir à quel point c'est robuste ou pas
+
                 DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, packet.getAddress(), packet.getPort());
                 socket.send(sendPacket);
-
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -7,6 +7,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 @CommandLine.Command(
@@ -14,6 +15,13 @@ import java.util.Scanner;
         description = "Start an Adventurer"
 )
 public class Adventurer extends AbstractUnicast {
+    private Quest acceptedQuest;
+    private boolean hasAQuest = false;
+
+    private enum Requests {
+        GET,
+        COMPLETE
+    }
 
     @Override
     public Integer call() {
@@ -22,48 +30,46 @@ public class Adventurer extends AbstractUnicast {
             System.out.println("[Adventurer] started (" + myself + ")");
             InetAddress serverAddress = InetAddress.getByName(host);
 
-            Scanner scanner = new Scanner(System.in);
-            while (true) {
-                System.out.print("[Adventurer] Enter a command: ");
-                String message = scanner.nextLine().toUpperCase();
-
-                // TODO check input
-                String[] arguments = message.split(" ");
-                if (arguments.length == 0) {
-                    continue;
-                } else if (arguments[0].equalsIgnoreCase("SUMMARY")) {
-                    System.out.println("I'm checking the billboard");
-                } else if (arguments[0].equalsIgnoreCase("GET")) {
-                    System.out.println("I'm getting the quest number " + arguments[1]);
-                } else if (arguments[0].equalsIgnoreCase("COMPLETE")){
-                    System.out.println("I completed the quest number " + arguments[1]);
-                } else if (arguments[0].equalsIgnoreCase("EXIT")) {
-                    break;
+            String message;
+            // 3% chance to exit every time.
+            while (Math.random() * 100 >= 3) {
+                System.out.print("[Adventurer] arrives to the village and ");
+                Thread.sleep((long) (Math.random() * 5000 + 10000));
+                if (hasAQuest) {
+                    System.out.println("sends word of the completion of a quest.");
+                    message = Requests.COMPLETE.name() + " " + acceptedQuest.getUuid();
+                } else {
+                    System.out.println("picks a quest from the billboard.");
+                    message = Requests.GET.name();
                 }
 
-                //Envoi du datagram
                 byte[] payload = message.getBytes(StandardCharsets.UTF_8);
 
-                DatagramPacket datagram = new DatagramPacket(
-                        payload,
-                        payload.length,
-                        serverAddress,
-                        unicastPort
-                );
+                DatagramPacket sentDatagram = new DatagramPacket(payload, payload.length, serverAddress, unicastPort);
+                socket.send(sentDatagram);
 
-                socket.send(datagram);
+                byte[] receivedPayload = new byte[1024];
 
-                //Reception du datagram
-                byte[] receiveDatagram = new byte[1024];
-                DatagramPacket receivePacket = new DatagramPacket(receiveDatagram, receiveDatagram.length);
-                socket.receive(receivePacket);
+                DatagramPacket receivedDatagram = new DatagramPacket(receivedPayload, receivedPayload.length);
+                socket.receive(receivedDatagram);
 
-                String receivedMessage = new String(receivePacket.getData(), receivePacket.getOffset(), receivePacket.getLength(), StandardCharsets.UTF_8);
+                String receivedMessage = new String(
+                        receivedDatagram.getData(),
+                        receivedDatagram.getOffset(),
+                        receivedDatagram.getLength(),
+                        StandardCharsets.UTF_8);
 
                 String[] receivedArguments = receivedMessage.split(" ");
 
-                // TODO Faire les différents cas dépendant de la réponse de Billboard.
-
+                if (receivedArguments[0].equalsIgnoreCase("COMPLETE") && receivedArguments.length == 1) {
+                    System.out.println("[Adventurer] receives " + acceptedQuest.getReward() + " pieces of gold for completing the quest !");
+                    hasAQuest = false;
+                    System.out.println("[Adventurer] rests after this epic quest.");
+                } else if (receivedArguments[0].equalsIgnoreCase("GIVE")) {
+                    acceptedQuest = Quest.fromBillboardToAdventurer(receivedMessage);
+                    hasAQuest = true;
+                    System.out.println("[Adventurer] takes the quest \"" + acceptedQuest.getName() + "\" and leaves the village for a moment.");
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
