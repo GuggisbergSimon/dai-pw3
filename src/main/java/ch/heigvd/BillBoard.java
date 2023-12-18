@@ -83,6 +83,7 @@ public class BillBoard extends AbstractMulticast {
             byte[] receiveData = new byte[1024];
 
             while (true) {
+                //Reception de la requete
                 DatagramPacket packet = new DatagramPacket(
                         receiveData,
                         receiveData.length
@@ -98,6 +99,38 @@ public class BillBoard extends AbstractMulticast {
                 );
 
                 System.out.println("[Billboard] Unicast receiver (" + myself + ") received message: " + message);
+
+                //Process les requetes
+                byte[] sendData;
+                String[] arguments = message.split(" ");
+                if (arguments[0] == "GET" && arguments.length == 2){
+                    String uuid = arguments[1];
+                    // TODO à modifier dépendant du système de mappage des quetes.
+                    String questInfo = "SEND [questName] [questDesc] [sum]"; //Dépendant du système de billboard.
+                    if (questInfo != null){
+                        //renvois l'info à l'aventurier.
+                        sendData = questInfo.getBytes();
+                    }
+                    else {
+                        System.out.println("Quête pas trouvé");
+                    }
+                }
+                else if (arguments[0] == "COMPLETE" && arguments.length == 2){
+                    // TODO set dans le billboard que la quête est terminé.
+                    String questComplete = "La quete " + arguments[1] + " a ete termine";
+                    sendData = questComplete.getBytes();
+                }
+                else if (arguments[0] == "SUMMARY" && arguments.length == 1){
+                    // TODO afficher toutes ou une partie des quêtes.
+                    String listQuests = "LIST";
+                }
+                else {
+                    System.out.println("Requete invalide");
+                }
+                //Faut voir à quel point c'est robuste ou pas
+                DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, packet.getAddress(), packet.getPort());
+                socket.send(sendPacket);
+
             }
         } catch (Exception e) {
             e.printStackTrace();

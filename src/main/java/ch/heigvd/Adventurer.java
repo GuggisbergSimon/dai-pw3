@@ -2,6 +2,7 @@ package ch.heigvd;
 
 import picocli.CommandLine;
 
+import javax.xml.crypto.Data;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -30,10 +31,17 @@ public class Adventurer extends AbstractUnicast {
                 String[] arguments = message.split(" ");
                 if (arguments.length == 0) {
                     continue;
+                } else if (arguments[0].equalsIgnoreCase("SUMMARY")) {
+                    System.out.println("I'm checking the billboard");
+                } else if (arguments[0].equalsIgnoreCase("GET")) {
+                    System.out.println("I'm getting the quest number " + arguments[1]);
+                } else if (arguments[0].equalsIgnoreCase("COMPLETE")){
+                    System.out.println("I completed the quest number " + arguments[1]);
                 } else if (arguments[0].equalsIgnoreCase("EXIT")) {
                     break;
                 }
 
+                //Envoi du datagram
                 byte[] payload = message.getBytes(StandardCharsets.UTF_8);
 
                 DatagramPacket datagram = new DatagramPacket(
@@ -44,6 +52,19 @@ public class Adventurer extends AbstractUnicast {
                 );
 
                 socket.send(datagram);
+
+                //Reception du datagram
+                byte[] receiveDatagram = new byte[1024];
+                DatagramPacket receivePacket = new DatagramPacket(receiveDatagram, receiveDatagram.length);
+                socket.receive(receivePacket);
+
+                String receivedMessage = new String(receivePacket.getData(), receivePacket.getOffset(), receivePacket.getLength(), StandardCharsets.UTF_8);
+
+                String[] receivedArguments = receivedMessage.split(" ");
+                // TODO Faire les différents cas dépendant de la réponse de Billboard.
+
+                String questInfo = new String(receivePacket.getData(), receivePacket.getOffset(), receivePacket.getLength());
+
             }
         } catch (Exception e) {
             e.printStackTrace();
