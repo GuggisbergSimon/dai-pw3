@@ -51,7 +51,7 @@ public class Quest {
      */
     public static Quest fromGuildPostMessage(String message) {
         String[] parts = message.split(" ", 2);
-        if(!parts[0].equals("POST")) {
+        if (!parts[0].equals("POST")) {
             return null;
         }
 
@@ -72,7 +72,7 @@ public class Quest {
      */
     public static Quest fromBillboardToAdventurer(String message) {
         String[] parts = message.split(" ", 2);
-        if(!parts[0].equals("GIVE")) {
+        if (!parts[0].equals("GIVE")) {
             return null;
         }
 

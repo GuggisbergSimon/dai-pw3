@@ -2,12 +2,8 @@ package ch.heigvd;
 
 import picocli.CommandLine;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
-import java.util.UUID;
 
 @CommandLine.Command(
         name = "guild",
