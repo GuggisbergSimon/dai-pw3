@@ -43,7 +43,7 @@ public class BillBoard extends AbstractMulticast {
             String myself = InetAddress.getLocalHost().getHostAddress() + ":" + multicastPort;
             System.out.println("[BillBoard] Multicast receiver started (" + myself + ")");
 
-            InetAddress multicastAddress = InetAddress.getByName(String.valueOf(multicastPort));
+            InetAddress multicastAddress = InetAddress.getByName(String.valueOf(host));
             InetSocketAddress group = new InetSocketAddress(multicastAddress, multicastPort);
             NetworkInterface networkInterface = NetworkInterface.getByName(interfaceName);
             socket.joinGroup(group, networkInterface);

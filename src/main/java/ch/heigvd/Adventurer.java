@@ -17,7 +17,7 @@ public class Adventurer extends AbstractUnicast {
     @Override
     public Integer call() {
         try (DatagramSocket socket = new DatagramSocket()) {
-            String myself = InetAddress.getLocalHost().getHostAddress() + " mp :" + unicastPort + " up : " + unicastPort;
+            String myself = InetAddress.getLocalHost().getHostAddress() + ":" + unicastPort;
             System.out.println("[Adventurer] started (" + myself + ")");
             InetAddress serverAddress = InetAddress.getByName(host);
 

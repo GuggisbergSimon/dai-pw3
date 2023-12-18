@@ -7,7 +7,7 @@ services:
     image: ghcr.io/guggisbergsimon/dai-pw3:v1.0
     command:
       - adventurer
-      - --host=239.1.1.1
+      - --host=billboard
       - --unicastPort=32000
 
   guild:
