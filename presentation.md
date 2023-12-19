@@ -11,6 +11,25 @@ random quest from a billboard.
 
 ![udp-dai-pw3.drawio.png](doc%2Fudp-dai-pw3.drawio.png)
 
+Messages sent by a Guild
+
+- POST [uuid]|[questName]|[questDesc]|[sum] : posts a quest
+
+Messages sent by a BillBoard
+
+- GIVE [questName]|[questDesc]|[sum] : returns a specific quest
+- COMPLETE : acknowledge the quest completed by an adventurer
+- ERROR
+    - WRONG_REQUEST : no such request exists
+    - NO_QUESTS : no UUID matching the one asked by the adventurer or
+      no
+      quests at all
+
+Messages sent by an Adventurer
+
+- GET : returns a random quest
+- COMPLETE [uuid] : completes the specified quest
+
 ## Code
 
 ```yaml
