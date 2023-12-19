@@ -13,8 +13,36 @@ random quest from a billboard.
 
 ## Code
 
+```yaml
+  adventurer:
+    image: ghcr.io/guggisbergsimon/dai-pw3:v1.0
+    command:
+      - adventurer
+      - --host=billboard
+      - --unicastPort=32000
+#...
+  billboard:
+    image: ghcr.io/guggisbergsimon/dai-pw3:v1.0
+    command:
+      - billboard
+      - --host=239.1.1.1
+      - --multicastPort=42000
+      - --unicastPort=32000
+      - --interface=eth0
+```
+
 ```java
-//TODO something here
+//Quest
+uuid = UUID.randomUUID().toString();
+//Billboard
+private ArrayList<Quest> quests = new ArrayList<Quest>();
+//...
+Quest quest = Quest.fromGuildPostMessage(message);
+if (quest != null) {
+    quests.add(quest);
+}
+//...
+quests.removeIf(quest -> quest.getUuid() == arguments[1]);
 ```
 
 ## Demo
