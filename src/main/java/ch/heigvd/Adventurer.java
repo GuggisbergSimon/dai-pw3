@@ -70,6 +70,13 @@ public class Adventurer extends AbstractUnicast {
                     hasAQuest = true;
                     System.out.println("[Adventurer] takes the quest \"" + acceptedQuest.getName() + "\" and leaves the village for a moment.");
                 }
+                else if (receivedArguments[0].equalsIgnoreCase("ERROR")) {
+                    if (receivedArguments[1].equalsIgnoreCase("WRONG_REQUEST")) {
+                        System.out.println("[ERROR] Invalid request");
+                    } else if (receivedArguments[1].equalsIgnoreCase("NO_QUESTS")) {
+                        System.out.println("[ERROR] No such quest");
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

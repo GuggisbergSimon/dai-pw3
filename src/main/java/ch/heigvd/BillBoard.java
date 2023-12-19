@@ -112,7 +112,7 @@ public class BillBoard extends AbstractMulticast {
 
                 if (arguments[0].equalsIgnoreCase("GET") && arguments.length == 1) {
                     if (quests.isEmpty()) {
-                        String errorNoQuests = "ERROR NO_ID";
+                        String errorNoQuests = "ERROR NO_QUESTS";
                         sendData = errorNoQuests.getBytes();
                     } else {
                         int number = (int) (Math.random() * quests.size());
@@ -130,7 +130,9 @@ public class BillBoard extends AbstractMulticast {
                     String questComplete = "COMPLETE";
                     sendData = questComplete.getBytes();
                 } else {
-                    System.out.println("Invalid request");
+                    System.out.println("[ERROR] Invalid request");
+                    String invalidRequest = "ERROR WRONG_REQUEST";
+                    sendData = invalidRequest.getBytes();
                 }
 
                 DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, packet.getAddress(), packet.getPort());
