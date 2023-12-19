@@ -44,7 +44,8 @@ docker push ghcr.io/guggisbergsimon/dai-pw3:v1.0
 
 #### Docker compose
 
-Depending on values adjusted during the build of the application (such as the github container repository, the version number),
+Depending on values adjusted during the build of the application (such
+as the github container repository, the version number),
 make sure those changes are reflected in the docker-compose.yaml.
 
 Run docker compose with everything setup in it :
@@ -95,13 +96,16 @@ This protocol is meant to :
 
 ## Transport protocol
 
-The protocol uses UDP. Therefore there is no end of connection since UDP is connectionless.
+The protocol uses UDP. Therefore there is no end of connection since
+UDP is connectionless.
 
-Guilds communicate with Billboards through Multicast with a pattern fire-and-forget.
+Guilds communicate with Billboards through Multicast with a pattern
+fire-and-forget.
 The communication is initiated by Guilds.
 Port used between Guild and BillBoard is : 42000
 
-Adventurers and Billboards communicate through Unicast with a pattern request-reply.
+Adventurers and Billboards communicate through Unicast with a pattern
+request-reply.
 The communication is initiated by Adventurers.
 Port used between BillBoard and Adventurer is : 32000
 
@@ -113,48 +117,41 @@ Messages sent by a Guild
 
 Messages sent by a BillBoard
 
-- LIST : returns a list of all quests in json format
-- SEND [questName]|[questDesc]|[sum] : returns a specific quest
+- GIVE [questName]|[questDesc]|[sum] : returns a specific quest
+- COMPLETE : acknowledge the quest completed by an adventurer
 - ERROR
-    - NO_UUID : No UUID matching the one asked by the adventurer 
-    - WRONG_COMMAND : No such command exists
-    - WRONG_ARGUMENT : Either wrong type for an argument or incorrect format
-    - OTHER : Any other error type
+    - NO_ID : No UUID matching the one asked by the adventurer or no
+      UUID at all
 
 Messages sent by an Adventurer
 
-- LIST : returns a list of all quests
 - GET : returns a random quest
-- GET [uuid] : returns a specific quest
+- COMPLETE [uuid] : completes the specified quest
 
 The new line character `\n` is used to end a communication.
 
-## Examples
-
-## Working example
+## Example
 
 A guild posts a quest :
-- POST 1280f219-bdb8-49db-bb1c-6123c951be19|Cursed Mines|Lift the curse plaguing a once-prosperous mining town.|80
+
+- POST 1280f219-bdb8-49db-bb1c-6123c951be19|Cursed Mines|Lift the
+  curse plaguing a once-prosperous mining town.|80
 
 A billboard receives it and stores it.
 
 An adventurer asks for a random quest :
+
 - GET
 
 The billboard responds to the adventurer with a quest :
-- SEND Cursed Mines|Lift the curse plaguing a once-prosperous mining town.|80
 
-### Error example 1
+- SEND Cursed Mines|Lift the curse plaguing a once-prosperous mining
+  town.|80
 
-A guild posts another quest but the application is setup badly :
-- POST 1234|Cursed code|come fix this code written by a shady wizard !|-100
+The adventurer leaves for the quest and, a while later sends a message concerning the completion of said quest :
 
-A billboard receives it but does not store it as it contains wrong data.
+- COMPLETE 1280f219-bdb8-49db-bb1c-6123c951be19
 
-### Error example 2
+The billboard receives it, deletes the matching entry and acknowledges that :
 
-An adventurer asks for a random quest but coffee had been spilled on their keyboard and keys stick to their fingers :
-- GETTT
-
-The billboard responds to the adventurer with an error message :
-- ERROR WRONG_COMMAND
+- COMPLETE
